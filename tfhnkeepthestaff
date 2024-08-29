@@ -17,9 +17,6 @@
   <label for="avgBillingPerHour">Average Billing Per Hour ($):</label>
   <input type="number" id="avgBillingPerHour" name="avgBillingPerHour" value="0"><br>
 
-  <label for="multiplier">Performance Multiplier:</label>
-  <input type="number" id="multiplier" name="multiplier" value="0"><br>
-
   <button type="button" onclick="calculatePay()">Calculate</button>
 </form>
 
@@ -30,9 +27,30 @@
     const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
     const requestedRate = parseFloat(document.getElementById('requestedRate').value) || 0;
     const currentVacation = parseFloat(document.getElementById('currentVacation').value) / 100 || 0;
-    const requestedVacation = parseFloat(document.g
+    const requestedVacation = parseFloat(document.getElementById('requestedVacation').value) / 100 || 0;
+    const avgBillingPerHour = parseFloat(document.getElementById('avgBillingPerHour').value) || 0;
 
+    const multiplier = 3; // Fixed performance multiplier
+    
+    const currentVacationPay = hourlyRate * currentVacation;
+    const newVacationPay = requestedRate * requestedVacation;
+    
+    const totalCurrentHourlyComp = hourlyRate + currentVacationPay;
+    const totalNewHourlyComp = requestedRate + newVacationPay;
+    
+    const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
+    
+    let result = '';
+    
+    if (requiredBillingsPerHour > avgBillingPerHour) {
+      const shortfall = requiredBillingsPerHour - avgBillingPerHour;
+      result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
+    } else {
+      const margin = avgBillingPerHour - requiredBillingsPerHour;
+      result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
+    }
     
     document.getElementById('result').innerText = result;
   }
 </script>
+
