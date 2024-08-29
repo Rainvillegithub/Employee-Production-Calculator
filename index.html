@@ -1,0 +1,58 @@
+<form id="payCalculator">
+  <label for="hourlyRate">Current Hourly Rate ($):</label>
+  <input type="number" id="hourlyRate" name="hourlyRate" value="40"><br>
+
+  <label for="requestedRate">Requested Hourly Rate ($):</label>
+  <input type="number" id="requestedRate" name="requestedRate" value="45"><br>
+
+  <label for="currentVacation">Current Vacation Pay (%):</label>
+  <input type="number" id="currentVacation" name="currentVacation" value="4"><br>
+
+  <label for="requestedVacation">Requested Vacation Pay (%):</label>
+  <input type="number" id="requestedVacation" name="requestedVacation" value="6"><br>
+
+  <label for="workingHours">Weekly Working Hours:</label>
+  <input type="number" id="workingHours" name="workingHours" value="15"><br>
+
+  <label for="avgBillingPerHour">Average Billing Per Hour ($):</label>
+  <input type="number" id="avgBillingPerHour" name="avgBillingPerHour" value="140"><br>
+
+  <label for="multiplier">Performance Multiplier:</label>
+  <input type="number" id="multiplier" name="multiplier" value="3"><br>
+
+  <button type="button" onclick="calculatePay()">Calculate</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+  function calculatePay() {
+    const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
+    const requestedRate = parseFloat(document.getElementById('requestedRate').value);
+    const currentVacation = parseFloat(document.getElementById('currentVacation').value) / 100;
+    const requestedVacation = parseFloat(document.getElementById('requestedVacation').value) / 100;
+    const workingHours = parseFloat(document.getElementById('workingHours').value);
+    const avgBillingPerHour = parseFloat(document.getElementById('avgBillingPerHour').value);
+    const multiplier = parseFloat(document.getElementById('multiplier').value);
+
+    const currentVacationPay = hourlyRate * currentVacation;
+    const newVacationPay = requestedRate * requestedVacation;
+    
+    const totalCurrentHourlyComp = hourlyRate + currentVacationPay;
+    const totalNewHourlyComp = requestedRate + newVacationPay;
+    
+    const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
+    
+    let result = '';
+    
+    if (requiredBillingsPerHour > avgBillingPerHour) {
+      const shortfall = requiredBillingsPerHour - avgBillingPerHour;
+      result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
+    } else {
+      const margin = avgBillingPerHour - requiredBillingsPerHour;
+      result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
+    }
+    
+    document.getElementById('result').innerText = result;
+  }
+</script>
