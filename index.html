@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hourly Rate and Billing Margin Calculator</title>
+    <title>Provider Billing and Pay Comparison</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,27 +61,21 @@
 </head>
 <body>
 
-    <h1>Hourly Rate and Billing Margin Calculator</h1>
+    <h1>Provider Billing and Pay Comparison</h1>
 
     <div class="calculator">
         <form id="payCalculator">
-            <label for="hourlyRate">Current Hourly Rate ($):</label>
-            <input type="number" id="hourlyRate" name="hourlyRate" value="0">
-
-            <label for="requestedRate">Requested Hourly Rate ($):</label>
-            <input type="number" id="requestedRate" name="requestedRate" value="0">
-
-            <label for="currentVacation">Current Vacation Pay (%):</label>
-            <input type="number" id="currentVacation" name="currentVacation" value="0">
-
-            <label for="requestedVacation">Requested Vacation Pay (%):</label>
-            <input type="number" id="requestedVacation" name="requestedVacation" value="0">
+            <label for="weeklyBillings">Gross Weekly Billings ($):</label>
+            <input type="number" id="weeklyBillings" name="weeklyBillings" value="0">
 
             <label for="workingHours">Weekly Working Hours:</label>
             <input type="number" id="workingHours" name="workingHours" value="0">
 
-            <label for="avgBillingPerHour">Average Billing Per Hour ($):</label>
-            <input type="number" id="avgBillingPerHour" name="avgBillingPerHour" value="0">
+            <label for="hourlyRate">Current Hourly Rate ($):</label>
+            <input type="number" id="hourlyRate" name="hourlyRate" value="0">
+
+            <label for="vacationPay">Vacation Pay (%):</label>
+            <input type="number" id="vacationPay" name="vacationPay" value="0">
 
             <button type="button" onclick="calculatePay()">Calculate</button>
         </form>
@@ -95,42 +89,39 @@
 
     <script>
     function calculatePay() {
+        const weeklyBillings = parseFloat(document.getElementById('weeklyBillings').value) || 0;
+        const workingHours = parseFloat(document.getElementById('workingHours').value) || 0;
         const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-        const requestedRate = parseFloat(document.getElementById('requestedRate').value) || 0;
-        const currentVacation = parseFloat(document.getElementById('currentVacation').value) / 100 || 0;
-        const requestedVacation = parseFloat(document.getElementById('requestedVacation').value) / 100 || 0;
-        const avgBillingPerHour = parseFloat(document.getElementById('avgBillingPerHour').value) || 0;
+        const vacationPay = parseFloat(document.getElementById('vacationPay').value) / 100 || 0;
 
-        const multiplier = 3; // Fixed performance multiplier
-        
-        const currentVacationPay = hourlyRate * currentVacation;
-        const newVacationPay = requestedRate * requestedVacation;
-        
-        const totalCurrentHourlyComp = hourlyRate + currentVacationPay;
-        const totalNewHourlyComp = requestedRate + newVacationPay;
-        
-        const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
-        
+        if (workingHours <= 0) {
+            alert("Please enter a valid number of working hours.");
+            return;
+        }
+
+        const grossHourlyBilling = weeklyBillings / workingHours;
+        const totalHourlyCompensation = hourlyRate + (hourlyRate * vacationPay);
+        const targetHourlyBilling = totalHourlyCompensation * 3;
+
         let result = '';
         let explanation = '';
 
         // Generating the result
-        if (requiredBillingsPerHour > avgBillingPerHour) {
-            const shortfall = requiredBillingsPerHour - avgBillingPerHour;
-            result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
+        if (grossHourlyBilling < targetHourlyBilling) {
+            const shortfall = targetHourlyBilling - grossHourlyBilling;
+            result = `Shortfall: $${shortfall.toFixed(2)} per hour. The provider is not meeting the target of generating 3 times their pay per hour.`;
         } else {
-            const margin = avgBillingPerHour - requiredBillingsPerHour;
-            result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
+            const surplus = grossHourlyBilling - targetHourlyBilling;
+            result = `Surplus: $${surplus.toFixed(2)} per hour. The provider is exceeding the target of generating 3 times their pay per hour.`;
         }
 
         // Generating the explanation
-        explanation += `<strong>Current Hourly Compensation:</strong> This includes your current hourly rate ($${hourlyRate.toFixed(2)}) plus vacation pay (${(currentVacation * 100).toFixed(2)}%), totaling $${totalCurrentHourlyComp.toFixed(2)} per hour.<br>`;
-        explanation += `<strong>Requested Hourly Compensation:</strong> Your requested rate ($${requestedRate.toFixed(2)}) plus the requested vacation pay (${(requestedVacation * 100).toFixed(2)}%), totaling $${totalNewHourlyComp.toFixed(2)} per hour.<br>`;
-        explanation += `<strong>Required Billings Per Hour:</strong> To meet the requested hourly compensation, your billing needs to be $${requiredBillingsPerHour.toFixed(2)} per hour, considering a performance multiplier of 3.<br>`;
-        explanation += `<strong>Comparison:</strong> Your current average billing per hour is $${avgBillingPerHour.toFixed(2)}. The shortfall or margin is calculated by comparing this with the required billings per hour.<br>`;
+        explanation += `<strong>Gross Hourly Billing:</strong> The provider generates $${grossHourlyBilling.toFixed(2)} per hour based on weekly billings divided by hours worked.<br>`;
+        explanation += `<strong>Total Hourly Compensation:</strong> The provider's current hourly rate plus vacation pay totals $${totalHourlyCompensation.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Target Hourly Billing:</strong> To meet the target of generating 3 times the pay, the provider should bill $${targetHourlyBilling.toFixed(2)} per hour.<br>`;
 
         // Generating the call to action
-        let callToAction = "If you're finding that your current billing structure falls short of what's needed, ";
+        let callToAction = "If you're finding that your current billing structure falls short of the target, ";
         callToAction += "or if you want to explore ways to improve profitability and compensation, ";
         callToAction += "contact us today for a personalized consultation. We're here to help you achieve your business goals.";
 
