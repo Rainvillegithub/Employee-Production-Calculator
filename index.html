@@ -1,55 +1,128 @@
-<form id="payCalculator">
-  <label for="hourlyRate">Current Hourly Rate ($):</label>
-  <input type="number" id="hourlyRate" name="hourlyRate" value="0"><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hourly Rate and Billing Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            border-radius: 5px;
+            font-size: 18px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
 
-  <label for="requestedRate">Requested Hourly Rate ($):</label>
-  <input type="number" id="requestedRate" name="requestedRate" value="0"><br>
+    <h1>Hourly Rate and Billing Calculator</h1>
 
-  <label for="currentVacation">Current Vacation Pay (%):</label>
-  <input type="number" id="currentVacation" name="currentVacation" value="0"><br>
+    <div class="calculator">
+        <form id="payCalculator">
+            <label for="hourlyRate">Current Hourly Rate ($):</label>
+            <input type="number" id="hourlyRate" name="hourlyRate" value="0">
 
-  <label for="requestedVacation">Requested Vacation Pay (%):</label>
-  <input type="number" id="requestedVacation" name="requestedVacation" value="0"><br>
+            <label for="requestedRate">Requested Hourly Rate ($):</label>
+            <input type="number" id="requestedRate" name="requestedRate" value="0">
 
-  <label for="workingHours">Weekly Working Hours:</label>
-  <input type="number" id="workingHours" name="workingHours" value="0"><br>
+            <label for="currentVacation">Current Vacation Pay (%):</label>
+            <input type="number" id="currentVacation" name="currentVacation" value="0">
 
-  <label for="avgBillingPerHour">Average Billing Per Hour ($):</label>
-  <input type="number" id="avgBillingPerHour" name="avgBillingPerHour" value="0"><br>
+            <label for="requestedVacation">Requested Vacation Pay (%):</label>
+            <input type="number" id="requestedVacation" name="requestedVacation" value="0">
 
-  <button type="button" onclick="calculatePay()">Calculate</button>
-</form>
+            <label for="workingHours">Weekly Working Hours:</label>
+            <input type="number" id="workingHours" name="workingHours" value="0">
 
-<p id="result"></p>
+            <label for="avgBillingPerHour">Average Billing Per Hour ($):</label>
+            <input type="number" id="avgBillingPerHour" name="avgBillingPerHour" value="0">
 
-<script>
-  function calculatePay() {
-    const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-    const requestedRate = parseFloat(document.getElementById('requestedRate').value) || 0;
-    const currentVacation = parseFloat(document.getElementById('currentVacation').value) / 100 || 0;
-    const requestedVacation = parseFloat(document.getElementById('requestedVacation').value) / 100 || 0;
-    const avgBillingPerHour = parseFloat(document.getElementById('avgBillingPerHour').value) || 0;
+            <button type="button" onclick="calculatePay()">Calculate</button>
+        </form>
+    </div>
 
-    const multiplier = 3; // Fixed performance multiplier
-    
-    const currentVacationPay = hourlyRate * currentVacation;
-    const newVacationPay = requestedRate * requestedVacation;
-    
-    const totalCurrentHourlyComp = hourlyRate + currentVacationPay;
-    const totalNewHourlyComp = requestedRate + newVacationPay;
-    
-    const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
-    
-    let result = '';
-    
-    if (requiredBillingsPerHour > avgBillingPerHour) {
-      const shortfall = requiredBillingsPerHour - avgBillingPerHour;
-      result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
-    } else {
-      const margin = avgBillingPerHour - requiredBillingsPerHour;
-      result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
+    <div id="result">
+        <p id="payResult"></p>
+    </div>
+
+    <script>
+    function calculatePay() {
+        const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+        const requestedRate = parseFloat(document.getElementById('requestedRate').value) || 0;
+        const currentVacation = parseFloat(document.getElementById('currentVacation').value) / 100 || 0;
+        const requestedVacation = parseFloat(document.getElementById('requestedVacation').value) / 100 || 0;
+        const avgBillingPerHour = parseFloat(document.getElementById('avgBillingPerHour').value) || 0;
+
+        const multiplier = 3; // Fixed performance multiplier
+        
+        const currentVacationPay = hourlyRate * currentVacation;
+        const newVacationPay = requestedRate * requestedVacation;
+        
+        const totalCurrentHourlyComp = hourlyRate + currentVacationPay;
+        const totalNewHourlyComp = requestedRate + newVacationPay;
+        
+        const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
+        
+        let result = '';
+        
+        if (requiredBillingsPerHour > avgBillingPerHour) {
+            const shortfall = requiredBillingsPerHour - avgBillingPerHour;
+            result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
+        } else {
+            const margin = avgBillingPerHour - requiredBillingsPerHour;
+            result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
+        }
+        
+        document.getElementById('payResult').innerText = result;
+        document.getElementById('result').style.display = 'block';
     }
-    
-    document.getElementById('result').innerText = result;
-  }
-</script>
+    </script>
+
+</body>
+</html>
