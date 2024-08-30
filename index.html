@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Provider Billing and Pay Comparison</title>
+    <title>Wage Increase Benchmark Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,23 +61,29 @@
 </head>
 <body>
 
-    <h1>Provider Billing and Pay Comparison</h1>
+    <h1>Wage Increase Benchmark Calculator</h1>
 
     <div class="calculator">
-        <form id="payCalculator">
+        <form id="benchmarkCalculator">
             <label for="weeklyBillings">Gross Weekly Billings ($):</label>
             <input type="number" id="weeklyBillings" name="weeklyBillings" value="0">
 
             <label for="workingHours">Weekly Working Hours:</label>
             <input type="number" id="workingHours" name="workingHours" value="0">
 
-            <label for="hourlyRate">Current Hourly Rate ($):</label>
-            <input type="number" id="hourlyRate" name="hourlyRate" value="0">
+            <label for="currentHourlyRate">Current Hourly Rate ($):</label>
+            <input type="number" id="currentHourlyRate" name="currentHourlyRate" value="0">
 
-            <label for="vacationPay">Vacation Pay (%):</label>
-            <input type="number" id="vacationPay" name="vacationPay" value="0">
+            <label for="currentVacationPay">Current Vacation Pay (%):</label>
+            <input type="number" id="currentVacationPay" name="currentVacationPay" value="0">
 
-            <button type="button" onclick="calculatePay()">Calculate</button>
+            <label for="requestedHourlyRate">Requested Hourly Rate ($):</label>
+            <input type="number" id="requestedHourlyRate" name="requestedHourlyRate" value="0">
+
+            <label for="requestedVacationPay">Requested Vacation Pay (%):</label>
+            <input type="number" id="requestedVacationPay" name="requestedVacationPay" value="0">
+
+            <button type="button" onclick="calculateBenchmark()">Calculate</button>
         </form>
     </div>
 
@@ -88,42 +94,53 @@
     </div>
 
     <script>
-    function calculatePay() {
+    function calculateBenchmark() {
         const weeklyBillings = parseFloat(document.getElementById('weeklyBillings').value) || 0;
         const workingHours = parseFloat(document.getElementById('workingHours').value) || 0;
-        const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-        const vacationPay = parseFloat(document.getElementById('vacationPay').value) / 100 || 0;
+        const currentHourlyRate = parseFloat(document.getElementById('currentHourlyRate').value) || 0;
+        const currentVacationPay = parseFloat(document.getElementById('currentVacationPay').value) / 100 || 0;
+        const requestedHourlyRate = parseFloat(document.getElementById('requestedHourlyRate').value) || 0;
+        const requestedVacationPay = parseFloat(document.getElementById('requestedVacationPay').value) / 100 || 0;
 
         if (workingHours <= 0) {
             alert("Please enter a valid number of working hours.");
             return;
         }
 
-        const grossHourlyBilling = weeklyBillings / workingHours;
-        const totalHourlyCompensation = hourlyRate + (hourlyRate * vacationPay);
-        const targetHourlyBilling = totalHourlyCompensation * 3;
+        // Calculate the provider's actual hourly production value
+        const actualHourlyProduction = weeklyBillings / workingHours;
+
+        // Calculate the current hourly compensation
+        const totalCurrentHourlyCompensation = currentHourlyRate + (currentHourlyRate * currentVacationPay);
+
+        // Calculate the requested hourly compensation
+        const totalRequestedHourlyCompensation = requestedHourlyRate + (requestedHourlyRate * requestedVacationPay);
+
+        // Calculate the target production (3 times the requested compensation)
+        const targetHourlyProduction = totalRequestedHourlyCompensation * 3;
 
         let result = '';
         let explanation = '';
 
         // Generating the result
-        if (grossHourlyBilling < targetHourlyBilling) {
-            const shortfall = targetHourlyBilling - grossHourlyBilling;
-            result = `Shortfall: $${shortfall.toFixed(2)} per hour. The provider is not meeting the target of generating 3 times their pay per hour.`;
+        if (actualHourlyProduction < targetHourlyProduction) {
+            const shortfall = targetHourlyProduction - actualHourlyProduction;
+            result = `Shortfall: $${shortfall.toFixed(2)} per hour. The provider's requested compensation exceeds what they are currently generating. The practice may not be able to afford the raise based on current production.`;
         } else {
-            const surplus = grossHourlyBilling - targetHourlyBilling;
-            result = `Surplus: $${surplus.toFixed(2)} per hour. The provider is exceeding the target of generating 3 times their pay per hour.`;
+            const surplus = actualHourlyProduction - targetHourlyProduction;
+            result = `Surplus: $${surplus.toFixed(2)} per hour. The provider's production supports the requested compensation, meeting the 3 times multiplier.`;
         }
 
         // Generating the explanation
-        explanation += `<strong>Gross Hourly Billing:</strong> The provider generates $${grossHourlyBilling.toFixed(2)} per hour based on weekly billings divided by hours worked.<br>`;
-        explanation += `<strong>Total Hourly Compensation:</strong> The provider's current hourly rate plus vacation pay totals $${totalHourlyCompensation.toFixed(2)} per hour.<br>`;
-        explanation += `<strong>Target Hourly Billing:</strong> To meet the target of generating 3 times the pay, the provider should bill $${targetHourlyBilling.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Actual Hourly Production:</strong> The provider generates $${actualHourlyProduction.toFixed(2)} per hour based on their billings divided by hours worked.<br>`;
+        explanation += `<strong>Current Hourly Compensation:</strong> The provider's current hourly rate plus vacation pay totals $${totalCurrentHourlyCompensation.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Requested Hourly Compensation:</strong> The requested hourly rate plus vacation pay totals $${totalRequestedHourlyCompensation.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Target Hourly Production:</strong> To justify the requested compensation, the provider should generate $${targetHourlyProduction.toFixed(2)} per hour, based on a 3 times multiplier.<br>`;
 
         // Generating the call to action
-        let callToAction = "If you're finding that your current billing structure falls short of the target, ";
-        callToAction += "or if you want to explore ways to improve profitability and compensation, ";
-        callToAction += "contact us today for a personalized consultation. We're here to help you achieve your business goals.";
+        let callToAction = "If the current production doesn't justify the requested compensation, ";
+        callToAction += "consider discussing how the provider can increase production or adjust expectations. ";
+        callToAction += "Contact us today for a personalized consultation to optimize compensation strategies.";
 
         // Displaying the results, explanation, and call to action
         document.getElementById('payResult').innerHTML = result;
