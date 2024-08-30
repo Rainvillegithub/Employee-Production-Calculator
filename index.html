@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hourly Rate and Billing Calculator</title>
+    <title>Hourly Rate and Billing Margin Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,7 +61,7 @@
 </head>
 <body>
 
-    <h1>Hourly Rate and Billing Calculator</h1>
+    <h1>Hourly Rate and Billing Margin Calculator</h1>
 
     <div class="calculator">
         <form id="payCalculator">
@@ -89,6 +89,8 @@
 
     <div id="result">
         <p id="payResult"></p>
+        <p id="explanation"></p>
+        <p id="callToAction"></p>
     </div>
 
     <script>
@@ -110,7 +112,9 @@
         const requiredBillingsPerHour = totalNewHourlyComp * multiplier;
         
         let result = '';
-        
+        let explanation = '';
+
+        // Generating the result
         if (requiredBillingsPerHour > avgBillingPerHour) {
             const shortfall = requiredBillingsPerHour - avgBillingPerHour;
             result = `Shortfall: $${shortfall.toFixed(2)} per hour. Consider increasing average billings or adjusting the pay structure.`;
@@ -118,8 +122,22 @@
             const margin = avgBillingPerHour - requiredBillingsPerHour;
             result = `Margin: $${margin.toFixed(2)} per hour. Current billing structure is sufficient.`;
         }
-        
-        document.getElementById('payResult').innerText = result;
+
+        // Generating the explanation
+        explanation += `<strong>Current Hourly Compensation:</strong> This includes your current hourly rate ($${hourlyRate.toFixed(2)}) plus vacation pay (${(currentVacation * 100).toFixed(2)}%), totaling $${totalCurrentHourlyComp.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Requested Hourly Compensation:</strong> Your requested rate ($${requestedRate.toFixed(2)}) plus the requested vacation pay (${(requestedVacation * 100).toFixed(2)}%), totaling $${totalNewHourlyComp.toFixed(2)} per hour.<br>`;
+        explanation += `<strong>Required Billings Per Hour:</strong> To meet the requested hourly compensation, your billing needs to be $${requiredBillingsPerHour.toFixed(2)} per hour, considering a performance multiplier of 3.<br>`;
+        explanation += `<strong>Comparison:</strong> Your current average billing per hour is $${avgBillingPerHour.toFixed(2)}. The shortfall or margin is calculated by comparing this with the required billings per hour.<br>`;
+
+        // Generating the call to action
+        let callToAction = "If you're finding that your current billing structure falls short of what's needed, ";
+        callToAction += "or if you want to explore ways to improve profitability and compensation, ";
+        callToAction += "contact us today for a personalized consultation. We're here to help you achieve your business goals.";
+
+        // Displaying the results, explanation, and call to action
+        document.getElementById('payResult').innerHTML = result;
+        document.getElementById('explanation').innerHTML = explanation;
+        document.getElementById('callToAction').innerHTML = callToAction;
         document.getElementById('result').style.display = 'block';
     }
     </script>
